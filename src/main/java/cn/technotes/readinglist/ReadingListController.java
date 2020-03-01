@@ -1,6 +1,7 @@
 package cn.technotes.readinglist;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,7 +19,10 @@ import java.util.List;
  */
 @Controller
 @RequestMapping("/")
+@ConfigurationProperties(prefix = "amazon")
 public class ReadingListController {
+
+    private String associateId;
 
     private ReadingListRepository readingListRepository;
 
@@ -27,32 +31,57 @@ public class ReadingListController {
         this.readingListRepository = readingListRepository;
     }
 
-    /**
-     * 根据读者获取读书列表
-     * @param reader
-     * @param model
-     * @return
-     */
-    @RequestMapping(value = "/{reader}", method = RequestMethod.GET)
-    public String readersBooks(@PathVariable("reader") String reader, Model model) {
+    public void setAssociateId(String associateId) {
+        this.associateId = associateId;
+    }
+
+    @RequestMapping(method = RequestMethod.GET)
+    public String readersBooks(Reader reader, Model model) {
         List<Book> readingList = readingListRepository.findByReader(reader);
         if (readingList != null) {
             model.addAttribute("books", readingList);
+            model.addAttribute("reader", reader);
+            model.addAttribute("amazonID", associateId);
         }
 
         return "readingList";
     }
 
     /**
+     * 根据读者获取读书列表
+     * @param reader
+     * @param model
+     * @return
+     */
+//    @RequestMapping(value = "/{reader}", method = RequestMethod.GET)
+//    public String readersBooks(@PathVariable("reader") String reader, Model model) {
+//        List<Book> readingList = readingListRepository.findByReader(reader);
+//        if (readingList != null) {
+//            model.addAttribute("books", readingList);
+//        }
+//
+//        return "readingList";
+//    }
+
+
+    /**
      * 添加读书列表
+     *
      * @param reader
      * @param book
      * @return
      */
-    @RequestMapping(value = "/{reader}", method = RequestMethod.POST)
-    public String addToReadingList(@PathVariable("reader") String reader, Book book) {
+//    @RequestMapping(value = "/{reader}", method = RequestMethod.POST)
+//    public String addToReadingList(@PathVariable("reader") String reader, Book book) {
+//        book.setReader(reader);
+//        readingListRepository.save(book);
+//        return "redirect:/{reader}";
+//    }
+    @RequestMapping(method = RequestMethod.POST)
+    public String addToReadingList(Reader reader, Book book) {
         book.setReader(reader);
         readingListRepository.save(book);
-        return "redirect:/{reader}";
+        return "redirect:/";
+
     }
 }

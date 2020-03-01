@@ -19,8 +19,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.authorizeRequests()
-                .antMatchers("/").access("hasRole('READER')")
+        http.csrf().disable() // // 关闭csrf保护功能（跨域访问）
+                .authorizeRequests()
+//                .antMatchers("/").access("hasRole('READER')")
                 .antMatchers("/**").permitAll()
                 .and()
                 .formLogin()

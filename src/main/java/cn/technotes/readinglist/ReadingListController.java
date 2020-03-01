@@ -19,21 +19,24 @@ import java.util.List;
  */
 @Controller
 @RequestMapping("/")
-@ConfigurationProperties(prefix = "amazon")
+//@ConfigurationProperties(prefix = "amazon")
 public class ReadingListController {
 
-    private String associateId;
+//    private String associateId;
 
     private ReadingListRepository readingListRepository;
 
+    private AmazonProperties amazonProperties;
+
     @Autowired
-    public ReadingListController(ReadingListRepository readingListRepository) {
+    public ReadingListController(ReadingListRepository readingListRepository, AmazonProperties amazonProperties) {
         this.readingListRepository = readingListRepository;
+        this.amazonProperties = amazonProperties;
     }
 
-    public void setAssociateId(String associateId) {
-        this.associateId = associateId;
-    }
+//    public void setAssociateId(String associateId) {
+//        this.associateId = associateId;
+//    }
 
     @RequestMapping(method = RequestMethod.GET)
     public String readersBooks(Reader reader, Model model) {
@@ -41,7 +44,7 @@ public class ReadingListController {
         if (readingList != null) {
             model.addAttribute("books", readingList);
             model.addAttribute("reader", reader);
-            model.addAttribute("amazonID", associateId);
+            model.addAttribute("amazonID", amazonProperties.getAssociateId());
         }
 
         return "readingList";
